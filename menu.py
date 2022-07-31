@@ -27,8 +27,8 @@ class Menu:
     def __init__(self) -> None:
         self.menu_items = []
 
-    def add_menu_item(self) -> None:
-        pass
+    def add_menu_item(self, menu_item: MenuItem) -> None:
+        self.menu_items.append(menu_item)
 
     def display_menu(self) -> None:
         for menu_item in self.menu_items:
