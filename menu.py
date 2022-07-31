@@ -31,7 +31,8 @@ class Menu:
         pass
 
     def display_menu(self) -> None:
-        pass
+        for menu_item in self.menu_items:
+            print(f'{menu_item.option_key}) {menu_item.description}')
 
     def run_selection(self) -> None:
         pass
