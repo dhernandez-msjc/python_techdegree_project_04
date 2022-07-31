@@ -34,10 +34,10 @@ class Menu:
         for menu_item in self.menu_items:
             print(f'{menu_item.option_key}) {menu_item.description}')
 
-    def run_selection(self) -> None:
+    def run_menu_selection(self) -> None:
         pass
 
-    def run_menu(self) -> None:
+    def start_menu(self) -> None:
         pass
 
 
