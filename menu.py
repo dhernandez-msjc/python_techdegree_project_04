@@ -7,7 +7,8 @@ class MenuItem:
     overridable execute function to execute the action of the item.
     """
 
-    def __init__(self, description: str) -> None:
+    def __init__(self, option_key: str, description: str) -> None:
+        self.option_key = option_key
         self.description = description
 
     def execute(self) -> None:
@@ -16,16 +17,6 @@ class MenuItem:
         :return: None
         """
         pass
-
-
-class QuitApplication(MenuItem):
-    """
-    Functor which provides an exit message when quitting application.
-    """
-
-    def execute(self):
-        print('Thank you for shopping with us!')
-        print('Closing the application.')
 
 
 class Menu:
@@ -50,5 +41,4 @@ class Menu:
 
 
 if __name__ == '__main__':
-    menu_item = QuitApplication('Exit Menu')
-    menu_item.execute()
+    pass
