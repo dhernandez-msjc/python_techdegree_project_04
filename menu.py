@@ -18,7 +18,9 @@ class MenuItem:
 
 
 class QuitApplication(MenuItem):
-
+    """
+    Functor which provides an exit message when quitting application.
+    """
     def execute(self):
         print('Thank you for shopping with us!')
         print('Closing the application.')
