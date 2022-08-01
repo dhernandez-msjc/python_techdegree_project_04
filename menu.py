@@ -1,4 +1,3 @@
-from string import ascii_letters
 import os
 
 EXIT_KEY = 'Q'
