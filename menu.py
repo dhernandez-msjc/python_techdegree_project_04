@@ -1,6 +1,8 @@
 from string import ascii_letters
 import os
 
+EXIT_KEY = 'Q'
+
 
 class MenuItem:
     """
@@ -48,10 +50,12 @@ class Menu:
         print(border)
 
     def run_menu_selection(self, menu_choice: str) -> bool:
-        if menu_choice in self.menu_item_keys:
-            self.menu_items[menu_choice.upper()].execute()
-            return True
-        return False
+        self.menu_items[menu_choice].execute()
+        return menu_choice in self.menu_item_keys and menu_choice != EXIT_KEY
+
+    def add_exit_function(self, exit_name='Exit') -> None:
+        if EXIT_KEY not in self.menu_item_keys:
+            self.add_menu_item(MenuItem(EXIT_KEY, exit_name))
 
     def start_menu(self) -> None:
         menu_is_running = True
@@ -59,8 +63,7 @@ class Menu:
         while menu_is_running:
             # self.clear_console()
             self.display_menu()
-
-            user_selection = input('Enter a menu selection: ')
+            user_selection = self._get_valid_user_entry()
             menu_is_running = self.run_menu_selection(user_selection)
 
     @staticmethod
@@ -81,22 +84,32 @@ class Menu:
                 longest_line_length = line_length
         return longest_line_length
 
+    def _get_valid_user_entry(self) -> str:
+        user_input = input('Enter a menu selection: ').upper()
+        is_valid_input = user_input in self.menu_item_keys and len(user_input) == 1
 
-class Testing(MenuItem):
-
-    def execute(self) -> None:
-        print("testing")
+        while not is_valid_input:
+            print(f'''
+            \rInvalid Menu Selection.
+            \rPlease type in a valid entry: {self.menu_item_keys}
+            ''')
+            user_input = input('Enter a menu selection: ').upper()
+            is_valid_input = user_input in self.menu_item_keys and len(user_input) == 1
+        return user_input
 
 
 class QuitMenu(MenuItem):
 
-    def execute(self, message='Closing the Application.') -> None:
-        print(f'{message}')
+    def __init__(self, option_key: str, description: str, exit_message='Closing the Application') -> None:
+        super().__init__(option_key, description)
+        self.exit_message = exit_message
+
+    def execute(self) -> None:
+        print(f'{self.exit_message}')
 
 
 if __name__ == '__main__':
     main_menu = Menu()
-    main_menu.add_menu_item(Testing(option_key='A', description='Addition'))
-    main_menu.add_menu_item(Testing(option_key='V', description='Another Addition'))
-    main_menu.add_menu_item(QuitMenu(option_key='Q', description='Another Another Addition'))
+    main_menu.add_menu_item(QuitMenu(option_key='A', description='Addition', exit_message='Conquering world now.'))
+    main_menu.add_exit_function()
     main_menu.start_menu()
