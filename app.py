@@ -1,5 +1,5 @@
-from menu_functions import (build_main_menu)
-from model import (Base, engine)
+from functions.menu_functions import (build_main_menu)
+from models.model import (Base, engine)
 
 
 def run_application() -> None:
