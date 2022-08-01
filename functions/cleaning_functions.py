@@ -23,10 +23,25 @@ def add_csv_data(csv_file_name: str) -> None:
     with open(csv_file_name) as csv_file:
         data = csv.reader(csv_file)
 
-        for line in enumerate(data):
-            product_exists_in_db = session.query(Product).filter(Product.product_name == line[0])
-            print(line)
-    pass
+        for index, line, in enumerate(data):
+            # skip the headers
+            if index == 0:
+                continue
+
+            # check for repeats and isolate single product entry
+            product_name, product_price, product_quantity, date_updated = line
+            product_exists_in_db = session.query(Product).filter(Product.product_name == product_name)
+
+            if product_exists_in_db == None:
+                product_price = clean_price(product_price)
+                product_quantity = clean_quantity(product_quantity)
+                date_updated = clean_date(date_updated)
+
+                new_product = Product(product_name=product_name, product_quantity=product_quantity,
+                                      product_price=product_price, date_updated=date_updated)
+                print(new_product)
+        #         session.add(new_product)
+        # session.commit()
 
 
 if __name__ == '__main__':
