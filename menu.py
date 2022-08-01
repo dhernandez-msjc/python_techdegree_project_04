@@ -53,9 +53,9 @@ class Menu:
         self.menu_items[menu_choice].execute()
         return menu_choice in self.menu_item_keys and menu_choice != EXIT_KEY
 
-    def add_exit_function(self, exit_name='Exit') -> None:
+    def add_exit_function(self, exit_name='Exit', exit_message='Closing the Application.') -> None:
         if EXIT_KEY not in self.menu_item_keys:
-            self.add_menu_item(MenuItem(EXIT_KEY, exit_name))
+            self.add_menu_item(QuitMenu(option_key=EXIT_KEY, description=exit_name, exit_message=exit_message))
 
     def start_menu(self) -> None:
         menu_is_running = True

@@ -1,4 +1,4 @@
-from menu import MenuItem
+from menu import (MenuItem, Menu)
 
 
 class NewProduct(MenuItem):
@@ -38,17 +38,18 @@ class BackupDatabase(MenuItem):
         pass
 
 
-class QuitApplication(MenuItem):
-    """
-    Functor which provides an exit message when quitting application.
-    """
-
-    def execute(self):
-        print('Thank you for shopping with us!')
-        print('Closing the application.')
+def build_main_menu() -> None:
+    main_menu = Menu()
+    main_menu.add_menu_item(MenuItem('N', 'New Product'))
+    main_menu.add_menu_item(MenuItem('V', 'View All Products'))
+    main_menu.add_menu_item(MenuItem('A', 'Product Analysis'))
+    main_menu.add_menu_item(MenuItem('B', 'Backup Database'))
+    main_menu.add_exit_function(exit_message='''
+    \rThank you for shopping with us!
+    \rClosing the application.
+    ''')
+    main_menu.start_menu()
 
 
 if __name__ == '__main__':
-    menu_item = QuitApplication('Q', 'Quit Application')
-    print(menu_item.option_key)
-    menu_item.execute()
+    build_main_menu()
