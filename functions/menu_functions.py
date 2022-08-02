@@ -1,6 +1,7 @@
 from models.menu import (MenuItem, Menu)
 from functions.product_functions import (NewProduct, ViewProducts, ProductAnalysis, BackupDatabase)
 
+
 def build_main_menu() -> None:
     main_menu = Menu()
     main_menu.add_menu_item(NewProduct('N', 'New Product'))
