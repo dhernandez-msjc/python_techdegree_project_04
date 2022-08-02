@@ -1,6 +1,6 @@
 import csv
 import datetime
-from model import (session, Product)
+from models.model import (session, Product)
 
 
 def clean_product_id(product_id_string: str, available_options: list) -> int:
@@ -45,4 +45,4 @@ def add_csv_data(csv_file_name: str) -> None:
 
 
 if __name__ == '__main__':
-    add_csv_data('inventory.csv')
+    add_csv_data('../models/data/inventory.csv')
