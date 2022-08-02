@@ -8,15 +8,55 @@ def clean_product_id(product_id_string: str, available_options: list) -> int:
 
 
 def clean_quantity(quantity_string: str) -> int:
-    pass
+    try:
+        return_quantity = int(quantity_string)
+    except ValueError:
+        input('''
+            \n************************ Quantity Error ************************
+            \rPlease enter a valid quantity as an integer.
+            \rEx. 21
+            \rPlease try again.
+            \r****************************************************************
+            ''')
+    else:
+        return return_quantity
 
 
 def clean_price(price_string: str) -> int:
-    pass
+    try:
+        price_as_float = float(price_string)
+    except ValueError:
+        input('''
+            \n************************** Price Error *************************
+            \rPlease enter a valid price without the $.
+            \rEx. 17.99
+            \rPlease try again.
+            \r****************************************************************
+            ''')
+    else:
+        return int(price_as_float * 100)
 
 
 def clean_date(date_string: str) -> datetime.date:
-    pass
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+              'August', 'September', 'October', 'November', 'December']
+
+    try:
+        month, day, year = date_string.split(' ')
+        month = months.index(month) + 1
+        day = int(day.split(',')[0])
+        year = int(year)
+        return_date = datetime.date(year, month, day)
+    except ValueError:
+        input('''
+        \n************************** Date Error **************************
+        \rPlease enter a valid date that is in the past.
+        \rEx. February 21, 1986
+        \rPlease try again.
+        \r****************************************************************
+        ''')
+    else:
+        return return_date
 
 
 def add_csv_data(csv_file_name: str) -> None:
@@ -40,8 +80,8 @@ def add_csv_data(csv_file_name: str) -> None:
                 new_product = Product(product_name=product_name, product_quantity=product_quantity,
                                       product_price=product_price, date_updated=date_updated)
                 print(new_product)
-        #         session.add(new_product)
-        # session.commit()
+                session.add(new_product)
+        session.commit()
 
 
 if __name__ == '__main__':
