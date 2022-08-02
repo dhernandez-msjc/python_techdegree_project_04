@@ -10,4 +10,4 @@ def run_application() -> None:
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv_data('models/data/inventory.csv')
-    # run_application()
+    run_application()

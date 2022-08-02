@@ -1,5 +1,5 @@
 from models.menu import MenuItem
-
+from models.model import (session, Product)
 
 class NewProduct(MenuItem):
     """
@@ -17,7 +17,10 @@ class ViewProducts(MenuItem):
     """
 
     def execute(self) -> None:
-        pass
+        products = session.query(Product)
+
+        for product in products:
+            print(product)
 
 
 class ProductAnalysis(MenuItem):
