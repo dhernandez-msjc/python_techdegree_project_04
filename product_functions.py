@@ -1,4 +1,4 @@
-from models.menu import MenuItem
+from menu import MenuItem
 
 
 class NewProduct(MenuItem):

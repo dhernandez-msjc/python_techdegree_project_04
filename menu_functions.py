@@ -1,4 +1,4 @@
-from models.menu import (MenuItem, Menu)
+from menu import (MenuItem, Menu)
 
 
 def build_main_menu() -> None:

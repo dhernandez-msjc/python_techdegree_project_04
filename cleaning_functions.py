@@ -1,6 +1,6 @@
 import csv
 import datetime
-from models.model import (session, Product)
+from model import (session, Product)
 
 
 def clean_product_id(product_id_string: str, available_options: list) -> int:
@@ -70,7 +70,7 @@ def add_csv_data(csv_file_name: str) -> None:
 
             # check for repeats and isolate single product entry
             product_name, product_price, product_quantity, date_updated = line
-            product_exists_in_db = session.query(Product).filter(Product.product_name == product_name)
+            product_exists_in_db = session.query(Product.__tablename__).filter(Product.product_name == product_name)
 
             if product_exists_in_db is None:
                 product_price = clean_price(product_price)
@@ -85,4 +85,4 @@ def add_csv_data(csv_file_name: str) -> None:
 
 
 if __name__ == '__main__':
-    add_csv_data('../models/data/inventory.csv')
+    add_csv_data('inventory.csv')
