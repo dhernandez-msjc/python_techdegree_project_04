@@ -10,6 +10,7 @@ Base = declarative_base()
 
 class Product(Base):
     __tablename__ = 'inventory'
+    
     product_id = Column(Integer, primary_key=True)
     product_name = Column(String)
     product_quantity = Column(Integer)
