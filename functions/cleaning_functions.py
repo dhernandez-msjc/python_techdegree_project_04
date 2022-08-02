@@ -32,7 +32,7 @@ def add_csv_data(csv_file_name: str) -> None:
             product_name, product_price, product_quantity, date_updated = line
             product_exists_in_db = session.query(Product).filter(Product.product_name == product_name)
 
-            if product_exists_in_db == None:
+            if product_exists_in_db is None:
                 product_price = clean_price(product_price)
                 product_quantity = clean_quantity(product_quantity)
                 date_updated = clean_date(date_updated)
