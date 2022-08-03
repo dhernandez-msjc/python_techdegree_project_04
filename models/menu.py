@@ -9,7 +9,7 @@ class MenuItem:
     overridable execute function to execute the action of the item.
     """
 
-    def __init__(self, option_key: str, description: str) -> None:
+    def __init__(self, option_key='', description='') -> None:
         self.option_key = option_key
         self.description = description
 

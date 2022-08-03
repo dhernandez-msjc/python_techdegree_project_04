@@ -40,7 +40,15 @@ class ViewProducts(MenuItem):
                   f'{name:{_get_longest_product_name_length()}}'
                   f' {" - " + description if description is not None else ""}')
         print(border)
-        Menu.pause_console()
+
+
+class ViewProductById(MenuItem):
+
+    def execute(self) -> None:
+        product_view = ViewProducts()
+        product_view.execute()
+
+        selected_product_id = input('Enter a product ID from the Inventory list: ')
 
 
 class ProductAnalysis(MenuItem):

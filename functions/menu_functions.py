@@ -1,11 +1,11 @@
 from models.menu import (MenuItem, Menu)
-from functions.product_functions import (NewProduct, ViewProducts, ProductAnalysis, BackupDatabase)
+from functions.product_functions import (NewProduct, ViewProductById, ProductAnalysis, BackupDatabase)
 
 
 def build_main_menu() -> None:
     main_menu = Menu()
     main_menu.add_menu_item(NewProduct('N', 'New Product'))
-    main_menu.add_menu_item(ViewProducts('V', 'View All Products'))
+    main_menu.add_menu_item(ViewProductById('V', 'View Product by ID'))
     main_menu.add_menu_item(ProductAnalysis('A', 'Product Analysis'))
     main_menu.add_menu_item(BackupDatabase('B', 'Backup Database'))
     main_menu.add_exit_function(exit_message='''
