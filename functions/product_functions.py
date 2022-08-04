@@ -8,6 +8,14 @@ class AppSetting(Enum):
     BORDER_SYMBOL = '>'
 
 
+class ProductDisplay(Enum):
+    ID = Product.product_id
+    NAME = Product.product_name
+    PRICE = Product.product_price
+    QUANTITY = Product.product_quantity
+    DATE = Product.date_updated
+
+
 class NewProduct(MenuItem):
     """
     Functor for adding a new product to the database.
@@ -57,7 +65,21 @@ class ProductAnalysis(MenuItem):
     """
 
     def execute(self) -> None:
-        pass
+        most_expensive_product = session.query(Product).order_by(Product.product_price.desc()).first()
+        least_expensive_product = session.query(Product).order_by(Product.product_price).first()
+
+        most_common_product = session.query(Product).order_by(Product.product_quantity.desc()).first()
+        least_common_product = session.query(Product).order_by(Product.product_quantity).first()
+
+        average_product_price = _get_average_product_price()
+
+        display_properties = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY]
+        print()
+        _display_product('Most expensive product', most_expensive_product, display_properties)
+        _display_product('Least expensive product', least_expensive_product, display_properties)
+        _display_product('Most common product', most_common_product, display_properties)
+        _display_product('Least common product', least_common_product, display_properties)
+        print(f'Average Product Price: ${average_product_price / 100: 0.2f}')
 
 
 class BackupDatabase(MenuItem):
@@ -113,6 +135,34 @@ def _calculate_border_length() -> int:
     name_length = _get_longest_product_name_length()
     description_length = _get_longest_description_length()
     return digit_length + gap_length + name_length + description_length
+
+
+def _get_average_product_price():
+    products = session.query(Product)
+    total_number_of_products = session.query(Product).count()
+    sum_of_product_prices = 0
+
+    for product in products:
+        sum_of_product_prices += product.product_price
+    return sum_of_product_prices // total_number_of_products
+
+
+def _display_product(characteristic: str, product, properties: list) -> None:
+    border = AppSetting.BORDER_SYMBOL.value * _calculate_border_length()
+
+    print(f'{border}')
+    print(characteristic)
+    print(border)
+    for property in properties:
+        if property == ProductDisplay.ID:
+            print(f'ID      : {product.product_id}')
+        if property == ProductDisplay.NAME:
+            print(f'Name    : {product.product_name}')
+        if property == ProductDisplay.PRICE:
+            print(f'Price   : ${product.product_price / 100: 0.2f}')
+        if property == ProductDisplay.NAME:
+            print(f'Quantity: {product.product_quantity}')
+    print(f'{border}\n')
 
 
 if __name__ == '__main__':
