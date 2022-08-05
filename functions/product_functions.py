@@ -57,7 +57,11 @@ class ViewProductById(MenuItem):
         product_view = ViewProducts()
         product_view.execute()
 
-        selected_product_id = input('Enter a product ID from the Inventory list: ')
+        selected_product_id = _get_valid_id()
+        product = session.query(Product).filter(Product.product_id == selected_product_id)
+        displays = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY, ProductDisplay.DATE]
+        # Menu.clear_console()
+        _display_product(f'Product ID: {product.product_id}', product, displays)
 
 
 class ProductAnalysis(MenuItem):
@@ -163,9 +167,25 @@ def _display_product(characteristic: str, product, properties: list) -> None:
             print(f'Name    : {product.product_name}')
         if property == ProductDisplay.PRICE:
             print(f'Price   : ${product.product_price / 100: 0.2f}')
-        if property == ProductDisplay.NAME:
+        if property == ProductDisplay.QUANTITY:
             print(f'Quantity: {product.product_quantity}')
+        if property == ProductDisplay.DATE:
+            print(f'Updated : {product.date_updated}')
     print(f'{border}\n')
+
+
+def _get_valid_id() -> int:
+    valid_inputs = [product.product_id for product in session.query(Product)]
+    while True:
+        try:
+            user_input = int(input('Enter a product ID from the Inventory list: '))
+
+            if user_input not in valid_inputs:
+                raise ValueError
+        except ValueError:
+            print('Please enter a valid ')
+        else:
+            return user_input
 
 
 if __name__ == '__main__':
