@@ -14,6 +14,7 @@ class ProductDisplay(Enum):
     PRICE = Product.product_price
     QUANTITY = Product.product_quantity
     DATE = Product.date_updated
+    BORDER_SYMBOL = '~'
 
 
 class NewProduct(MenuItem):
@@ -74,12 +75,14 @@ class ProductAnalysis(MenuItem):
         average_product_price = _get_average_product_price()
 
         display_properties = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY]
-        print()
+        # Menu.clear_console()
+        print(f'{"INVENTORY ANALYSIS": ^{_calculate_border_length()}}')
         _display_product('Most expensive product', most_expensive_product, display_properties)
         _display_product('Least expensive product', least_expensive_product, display_properties)
         _display_product('Most common product', most_common_product, display_properties)
         _display_product('Least common product', least_common_product, display_properties)
         print(f'Average Product Price: ${average_product_price / 100: 0.2f}')
+        Menu.pause_console()
 
 
 class BackupDatabase(MenuItem):
@@ -148,7 +151,7 @@ def _get_average_product_price():
 
 
 def _display_product(characteristic: str, product, properties: list) -> None:
-    border = AppSetting.BORDER_SYMBOL.value * _calculate_border_length()
+    border = ProductDisplay.BORDER_SYMBOL.value * _calculate_border_length()
 
     print(f'{border}')
     print(characteristic)
