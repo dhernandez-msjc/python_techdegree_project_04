@@ -58,10 +58,13 @@ class ViewProductById(MenuItem):
         product_view.execute()
 
         selected_product_id = _get_valid_id()
-        product = session.query(Product).filter(Product.product_id == selected_product_id)
+        product = session.query(Product).filter(Product.product_id == selected_product_id).first()
         displays = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY, ProductDisplay.DATE]
         # Menu.clear_console()
         _display_product(f'Product ID: {product.product_id}', product, displays)
+
+
+# TODO add sub menu for editing product
 
 
 class ProductAnalysis(MenuItem):
