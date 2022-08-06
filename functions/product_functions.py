@@ -80,6 +80,14 @@ class ViewProductById(MenuItem):
 # TODO add sub menu for editing product
 
 
+class EditProduct(MenuItem):
+    pass
+
+
+class DeleteProduct(MenuItem):
+    pass
+
+
 class ProductAnalysis(MenuItem):
     """
     Functor for displaying product analysis.
@@ -226,6 +234,7 @@ def _get_valid_quantity() -> int:
         if type(quantity) == int:
             quantity_error_exists = False
     return quantity
+
 
 def _get_valid_date() -> datetime.date:
     date_error_exists = True
