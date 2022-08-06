@@ -3,10 +3,6 @@ import datetime
 from models.model import (session, Product)
 
 
-def clean_product_id(product_id_string: str, available_options: list) -> int:
-    pass
-
-
 def clean_quantity(quantity_string: str) -> int:
     try:
         return_quantity = int(quantity_string)
@@ -16,42 +12,43 @@ def clean_quantity(quantity_string: str) -> int:
         \rEnter an integer value for quantity.
         \rEx. 17
         \rPlease Try Again.
-        \r**********************************************************************
-        ''')
+        \r**********************************************************************''')
     else:
         return return_quantity
 
 
 def clean_price(price_string: str) -> int:
     try:
-        price_as_float = float(price_string.split('$')[1])
+        split_price = price_string.split('$')
+        if len(split_price) > 1:
+            price_as_float = float(split_price[1])
+        else:
+            price_as_float = float(split_price[0])
     except ValueError:
         input('''
         \n************************** Price Error ****************************
-        \rEnter a value for price with dollar sign.
+        \rEnter a value for price with or without dollar sign.
         \rEx. $19.76
         \rPlease Try Again.
-        \r**********************************************************************
-        ''')
+        \r*******************************************************************''')
     else:
         return int(price_as_float * 100)
 
 
-def clean_date(date_string: str) -> datetime.date:
+def clean_date(date_string) -> datetime.date:
     try:
         month, day, year = date_string.split('/')
         month = int(month)
         day = int(day)
         year = int(year)
-        return_date = datetime.date(year, month, day)
+        return_date = datetime.date(year=year, month=month, day=day)
     except ValueError:
         input('''
         \n************************** Date Error ****************************
         \rEnter a valid date from the past.
-        \rEx. 2/21/1986
-        \rPlease Try Again.
-        \r**********************************************************************
-        ''')
+        \rEx. 02/21/1986
+        \rPlease try again.
+        \r******************************************************************''')
     else:
         return return_date
 

@@ -1,6 +1,9 @@
+import datetime
+import time
 from enum import Enum
 from models.menu import (MenuItem, Menu)
 from models.model import (session, Product)
+import functions.cleaning_functions as clean
 
 
 class AppSetting(Enum):
@@ -23,7 +26,17 @@ class NewProduct(MenuItem):
     """
 
     def execute(self) -> None:
-        pass
+        product_name = input('Enter the product name: ')
+        product_price = _get_valid_price()
+        product_quantity = _get_valid_quantity()
+        date_updated = _get_valid_date()
+
+        new_product = Product(product_name=product_name, product_price=product_price,
+                              product_quantity=product_quantity, date_updated=date_updated)
+        session.add(new_product)
+        session.commit()
+        print('New product has been added.')
+        time.sleep(1.5)
 
 
 class ViewProducts(MenuItem):
@@ -173,7 +186,7 @@ def _display_product(characteristic: str, product, properties: list) -> None:
         if property == ProductDisplay.QUANTITY:
             print(f'Quantity: {product.product_quantity}')
         if property == ProductDisplay.DATE:
-            print(f'Updated : {product.date_updated}')
+            print(f'Updated : {product.date_updated.strftime("%m/%d/%Y")}')
     print(f'{border}\n')
 
 
@@ -186,9 +199,44 @@ def _get_valid_id() -> int:
             if user_input not in valid_inputs:
                 raise ValueError
         except ValueError:
-            print('Please enter a valid ')
+            print('Please enter a valid product ID from the list above.')
         else:
             return user_input
+
+
+def _get_valid_price() -> int:
+    price_error_exists = True
+    price = None
+
+    while price_error_exists:
+        price = input('Enter the product price (ex. 9.75): ')
+        price = clean.clean_price(price)
+        if type(price) == int:
+            price_error_exists = False
+    return price
+
+
+def _get_valid_quantity() -> int:
+    quantity_error_exists = True
+    quantity = None
+
+    while quantity_error_exists:
+        quantity = input('Enter quantity of product: ')
+        quantity = clean.clean_quantity(quantity)
+        if type(quantity) == int:
+            quantity_error_exists = False
+    return quantity
+
+def _get_valid_date() -> datetime.date:
+    date_error_exists = True
+    date = None
+
+    while date_error_exists:
+        date = input('Enter the update date (02/21/1986): ')
+        date = clean.clean_date(date)
+        if type(date) == datetime.date:
+            date_error_exists = False
+    return date
 
 
 if __name__ == '__main__':
