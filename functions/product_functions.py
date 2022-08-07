@@ -10,11 +10,17 @@ current_product = None
 
 
 class AppSetting(Enum):
+    """
+    Enum for main application settings.
+    """
     GAP_LENGTH = 7
     BORDER_SYMBOL = '>'
 
 
 class ProductDisplay(Enum):
+    """
+    Enum for Product Display Settings
+    """
     ID = Product.product_id
     NAME = Product.product_name
     PRICE = Product.product_price
@@ -24,6 +30,9 @@ class ProductDisplay(Enum):
 
 
 class ColumnName(Enum):
+    """
+    Enum for managing Columns
+    """
     NAME = 'Name'
     PRICE = 'Price'
     QUANTITY = 'Quantity'
@@ -167,6 +176,9 @@ class EditProductQuantity(MenuItem):
 
 
 class EditProductDate(MenuItem):
+    """
+    Edits the product update date.
+    """
 
     def execute(self) -> None:
         global current_product
@@ -258,6 +270,10 @@ def _edit_check(column_name: ColumnName, current_value):
 
 
 def _determine_digit_length() -> int:
+    """
+    Determines the number of digits in an integer.
+    :return: integer representing the number of digits.
+    """
     digits = session.query(Product).count()
     digit_length = 0
 
@@ -268,6 +284,10 @@ def _determine_digit_length() -> int:
 
 
 def _get_longest_product_name_length() -> int:
+    """
+    Determines the length of the longest product name.
+    :return: integer value representing the length.
+    """
     longest_length = 0
 
     products = session.query(Product)
@@ -281,6 +301,10 @@ def _get_longest_product_name_length() -> int:
 
 
 def _get_longest_description_length() -> int:
+    """
+    Determines the longest description length of a product.
+    :return: integer value representing the longest description length.
+    """
     longest_length = 0
 
     products = session.query(Product)
@@ -296,6 +320,11 @@ def _get_longest_description_length() -> int:
 
 
 def _calculate_border_length() -> int:
+    """
+    Calculates the border length based on the total product name with clean
+    spacing.  Also takes into account provided gap length and non-white spacing.
+    :return:
+    """
     digit_length = _determine_digit_length() + 2
     gap_length = AppSetting.GAP_LENGTH.value
     name_length = _get_longest_product_name_length()
@@ -304,6 +333,10 @@ def _calculate_border_length() -> int:
 
 
 def _get_average_product_price():
+    """
+    Determines the average product price.
+    :return:
+    """
     products = session.query(Product)
     total_number_of_products = session.query(Product).count()
     sum_of_product_prices = 0
@@ -314,6 +347,13 @@ def _get_average_product_price():
 
 
 def _display_product(characteristic: str, product, attributes: list) -> None:
+    """
+    Displays the individual product price in a nicely formatted manner.
+    :param characteristic: The title of what is to be shown.
+    :param product: The query result product to be shown.
+    :param attributes: The desired attributes of the product to be displayed.
+    :return: None
+    """
     border = ProductDisplay.BORDER_SYMBOL.value * _calculate_border_length()
 
     print(f'{border}')
