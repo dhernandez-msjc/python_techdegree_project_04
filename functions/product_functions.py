@@ -55,6 +55,7 @@ def build_edit_menu() -> None:
     :return: None
     """
     product_edit_menu = Menu(title='Product Edit Meu', border_symbol='=')
+    product_edit_menu.add_menu_item(DisplayProduct('V', 'View Product Details'))
     product_edit_menu.add_menu_item(EditProductName('N', 'Edit Product Name'))
     product_edit_menu.add_menu_item(EditProductPrice('P', 'Edit product price'))
     product_edit_menu.add_menu_item(EditProductQuantity('T', 'Edit product quantity'))
@@ -108,6 +109,7 @@ class ViewProducts(MenuItem):
                   f'{name:{_get_longest_product_name_length()}}'
                   f' {" - " + description if description is not None else ""}')
         print(border)
+        Menu.pause_console()
 
 
 class ViewProductById(MenuItem):
@@ -219,6 +221,20 @@ class BackupDatabase(MenuItem):
         pass
 
 
+class DisplayProduct(MenuItem):
+    """
+    Functor to display current product
+    """
+    def execute(self) -> None:
+        global current_product
+        displays = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY, ProductDisplay.DATE]
+
+        if current_product is not None:
+            _display_product(f'Product ID: {current_product.product_id}', current_product, displays)
+        else:
+            print('Product has been deleted.  Please select a new product.')
+
+
 def _edit_check(column_name: ColumnName, current_value):
     print(f'\n**** EDIT {column_name.value} ****')
     if column_name is column_name.PRICE:
@@ -231,8 +247,13 @@ def _edit_check(column_name: ColumnName, current_value):
     if column_name is column_name.NAME:
         return input('What would you like to change the value to: ')
     else:
-        while True:
-            changes = input('What would you like to change the value to: ')
+        changes = input('What would you like to change the value to: ')
+        if column_name is column_name.PRICE:
+            return clean.clean_price(changes)
+        elif column_name is column_name.QUANTITY:
+            return clean.clean_quantity(changes)
+        else:
+            return clean.clean_date(changes)
 
 
 def _determine_digit_length() -> int:
