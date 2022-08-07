@@ -218,13 +218,14 @@ class BackupDatabase(MenuItem):
     """
 
     def execute(self) -> None:
-        pass
+        clean.write_csv('backup.csv')
 
 
 class DisplayProduct(MenuItem):
     """
     Functor to display current product
     """
+
     def execute(self) -> None:
         global current_product
         displays = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY, ProductDisplay.DATE]

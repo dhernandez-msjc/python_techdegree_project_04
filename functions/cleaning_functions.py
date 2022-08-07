@@ -3,6 +3,9 @@ import datetime
 from models.model import (session, Product)
 
 
+headers = None
+
+
 def clean_quantity(quantity_string: str) -> int:
     try:
         return_quantity = int(quantity_string)
@@ -54,9 +57,11 @@ def clean_date(date_string) -> datetime.date:
 
 
 def add_csv_data(csv_file_name: str) -> None:
+    global headers
+
     with open(csv_file_name) as csv_file:
         data = csv.reader(csv_file)
-        header = next(data)
+        headers = next(data)
 
         for line in data:
             # check for repeats and isolate single product entry
@@ -74,6 +79,19 @@ def add_csv_data(csv_file_name: str) -> None:
                 print(new_product)
                 session.add(new_product)
             session.commit()
+
+
+def write_csv(csv_file_name: str) -> None:
+    global headers
+    with open(csv_file_name) as csv_file:
+        product_writer = csv.DictWriter(csv_file, fieldnames=headers)
+
+        product_writer.writeheader()
+        for product in session.query(Product):
+            product_writer.writerow({'product_name': product.product_name,
+                                     'product_price': "$" + product.product_price,
+                                     'product_quantity': product.product_quantity,
+                                     'date_updated': product.date_updated})
 
 
 if __name__ == '__main__':
