@@ -83,15 +83,15 @@ def add_csv_data(csv_file_name: str) -> None:
 
 def write_csv(csv_file_name: str) -> None:
     global headers
-    with open(csv_file_name) as csv_file:
+    with open(csv_file_name, 'w') as csv_file:
         product_writer = csv.DictWriter(csv_file, fieldnames=headers)
 
         product_writer.writeheader()
         for product in session.query(Product):
             product_writer.writerow({'product_name': product.product_name,
-                                     'product_price': "$" + product.product_price,
+                                     'product_price': f"${product.product_price / 100:.2f}",
                                      'product_quantity': product.product_quantity,
-                                     'date_updated': product.date_updated})
+                                     'date_updated': product.date_updated.strftime("%m/%d/%Y")})
 
 
 if __name__ == '__main__':
