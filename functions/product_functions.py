@@ -80,6 +80,7 @@ class NewProduct(MenuItem):
     """
 
     def execute(self) -> None:
+        Menu.clear_console()
         product_name = input('Enter the product name: ')
         product_price = _get_valid_integer(prompt='Enter the product price (ex. 9.75): ',
                                            clean_function=clean.clean_price)
@@ -107,6 +108,7 @@ class ViewProducts(MenuItem):
         border_length = _calculate_border_length()
         border = AppSetting.BORDER_SYMBOL.value * border_length
 
+        Menu.clear_console()
         print(f'\n{border}')
         print(f'\r{"Inventory List": ^{border_length}}')
         print(f'{border}')
@@ -214,7 +216,7 @@ class ProductAnalysis(MenuItem):
         average_product_price = _get_average_product_price()
 
         display_properties = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY]
-        # Menu.clear_console()
+        Menu.clear_console()
         print(f'{"INVENTORY ANALYSIS": ^{_calculate_border_length()}}')
         _display_product('Most expensive product', most_expensive_product, display_properties)
         _display_product('Least expensive product', least_expensive_product, display_properties)
@@ -230,7 +232,10 @@ class BackupDatabase(MenuItem):
     """
 
     def execute(self) -> None:
-        clean.write_csv('backup.csv')
+        db_backup_file_name = 'db_backup.csv'
+        clean.write_csv(db_backup_file_name)
+        print(f'Database has been successfully backed up to: {db_backup_file_name}')
+        time.sleep(1.5)
 
 
 class DisplayProduct(MenuItem):
@@ -246,6 +251,8 @@ class DisplayProduct(MenuItem):
             _display_product(f'Product ID: {current_product.product_id}', current_product, displays)
         else:
             print('Product has been deleted.  Please select a new product.')
+
+        Menu.pause_console()
 
 
 def _edit_check(column_name: ColumnName, current_value):
@@ -356,7 +363,7 @@ def _display_product(characteristic: str, product, attributes: list) -> None:
     """
     border = ProductDisplay.BORDER_SYMBOL.value * _calculate_border_length()
 
-    print(f'{border}')
+    print(f'\n{border}')
     print(characteristic)
     print(border)
     for attribute in attributes:
@@ -370,7 +377,7 @@ def _display_product(characteristic: str, product, attributes: list) -> None:
             print(f'Quantity: {product.product_quantity}')
         if attribute == ProductDisplay.DATE:
             print(f'Updated : {product.date_updated.strftime("%m/%d/%Y")}')
-    print(f'{border}\n')
+    print(f'{border}')
 
 
 def _get_valid_id() -> int:

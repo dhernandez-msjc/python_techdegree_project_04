@@ -72,7 +72,7 @@ class Menu:
 
     @staticmethod
     def pause_console() -> None:
-        input('\nPress enter to continue ...\n')
+        input('\nPress enter to continue ...')
 
     def _determine_longest_line_length(self) -> int:
         longest_line_length = len(self.menu_title)
