@@ -1,4 +1,4 @@
-from functions.menu_functions import (build_main_menu)
+from functions.product_functions import (build_main_menu)
 from functions.cleaning_functions import add_csv_data
 from models.model import (Base, engine)
 

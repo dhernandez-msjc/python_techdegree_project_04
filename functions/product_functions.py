@@ -1,9 +1,11 @@
 import datetime
 import time
 from enum import Enum
+import functions.cleaning_functions as clean
 from models.menu import (MenuItem, Menu)
 from models.model import (session, Product)
-import functions.cleaning_functions as clean
+
+current_product = None
 
 
 class AppSetting(Enum):
@@ -20,6 +22,34 @@ class ProductDisplay(Enum):
     BORDER_SYMBOL = '~'
 
 
+class ColumnName(Enum):
+    NAME = 'Name'
+    PRICE = 'Price'
+    QUANTITY = 'Quantity'
+    DATE = 'Date'
+
+
+def build_main_menu() -> None:
+    main_menu = Menu()
+    main_menu.add_menu_item(NewProduct('N', 'New Product'))
+    main_menu.add_menu_item(ViewProductById('V', 'View Product by ID'))
+    main_menu.add_menu_item(ProductAnalysis('A', 'Product Analysis'))
+    main_menu.add_menu_item(BackupDatabase('B', 'Backup Database'))
+    main_menu.add_exit_function(exit_message='''
+    \rThank you for shopping with us!
+    \rClosing the application.
+    ''')
+    main_menu.start_menu()
+
+
+def build_edit_menu() -> None:
+    product_edit_menu = Menu(title='Product Edit Meu', border_symbol='=')
+    product_edit_menu.add_menu_item(EditProduct('E', 'Edit Current Product'))
+    product_edit_menu.add_menu_item(DeleteProduct('D', 'Delete Product'))
+    product_edit_menu.add_exit_function(exit_name='Return to main menu', exit_message="Returning to main menu.")
+    product_edit_menu.start_menu()
+
+
 class NewProduct(MenuItem):
     """
     Functor for adding a new product to the database.
@@ -27,8 +57,10 @@ class NewProduct(MenuItem):
 
     def execute(self) -> None:
         product_name = input('Enter the product name: ')
-        product_price = _get_valid_price()
-        product_quantity = _get_valid_quantity()
+        product_price = _get_valid_integer(prompt='Enter the product price (ex. 9.75): ',
+                                           clean_function=clean.clean_price)
+        product_quantity = _get_valid_integer(prompt='Enter quantity of product: ',
+                                              clean_function=clean.clean_quantity)
         date_updated = _get_valid_date()
 
         new_product = Product(product_name=product_name, product_price=product_price,
@@ -67,25 +99,33 @@ class ViewProducts(MenuItem):
 class ViewProductById(MenuItem):
 
     def execute(self) -> None:
+        global current_product
         product_view = ViewProducts()
         product_view.execute()
 
         selected_product_id = _get_valid_id()
-        product = session.query(Product).filter(Product.product_id == selected_product_id).first()
+        current_product = session.query(Product).filter(Product.product_id == selected_product_id).first()
         displays = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY, ProductDisplay.DATE]
         # Menu.clear_console()
-        _display_product(f'Product ID: {product.product_id}', product, displays)
-
-
-# TODO add sub menu for editing product
+        _display_product(f'Product ID: {current_product.product_id}', current_product, displays)
+        build_edit_menu()
+        current_product = None
 
 
 class EditProduct(MenuItem):
-    pass
+
+    def execute(self) -> None:
+        super().execute()
 
 
 class DeleteProduct(MenuItem):
-    pass
+
+    def execute(self) -> None:
+        global current_product
+        session.delete(current_product)
+        session.commit()
+        print('Product deleted')
+        time.sleep(1.5)
 
 
 class ProductAnalysis(MenuItem):
@@ -120,6 +160,22 @@ class BackupDatabase(MenuItem):
 
     def execute(self) -> None:
         pass
+
+
+def edit_check(column_name: ColumnName, current_value):
+    print(f'\n**** EDIT {column_name.value} ****')
+    if column_name is column_name.PRICE:
+        print(f'\rCurrent Value: {current_value / 100: 0.2f}')
+    elif column_name is column_name.DATE:
+        print(f'\rCurrent Value: {current_value.strftime("%m/%d/%Y")}')
+    else:
+        print(f'\rCurrent Value: {current_value}')
+
+    if column_name is column_name.NAME:
+        return input('What would you like to change the value to: ')
+    else:
+        while True:
+            changes = input('What would you like to change the value to: ')
 
 
 def _determine_digit_length() -> int:
@@ -178,22 +234,22 @@ def _get_average_product_price():
     return sum_of_product_prices // total_number_of_products
 
 
-def _display_product(characteristic: str, product, properties: list) -> None:
+def _display_product(characteristic: str, product, attributes: list) -> None:
     border = ProductDisplay.BORDER_SYMBOL.value * _calculate_border_length()
 
     print(f'{border}')
     print(characteristic)
     print(border)
-    for property in properties:
-        if property == ProductDisplay.ID:
+    for attribute in attributes:
+        if attribute == ProductDisplay.ID:
             print(f'ID      : {product.product_id}')
-        if property == ProductDisplay.NAME:
+        if attribute == ProductDisplay.NAME:
             print(f'Name    : {product.product_name}')
-        if property == ProductDisplay.PRICE:
+        if attribute == ProductDisplay.PRICE:
             print(f'Price   : ${product.product_price / 100: 0.2f}')
-        if property == ProductDisplay.QUANTITY:
+        if attribute == ProductDisplay.QUANTITY:
             print(f'Quantity: {product.product_quantity}')
-        if property == ProductDisplay.DATE:
+        if attribute == ProductDisplay.DATE:
             print(f'Updated : {product.date_updated.strftime("%m/%d/%Y")}')
     print(f'{border}\n')
 
@@ -210,6 +266,18 @@ def _get_valid_id() -> int:
             print('Please enter a valid product ID from the list above.')
         else:
             return user_input
+
+
+def _get_valid_integer(prompt: str, clean_function):
+    error_exists = True
+    value = None
+
+    while error_exists:
+        value = input(prompt)
+        value = clean_function(value)
+        if type(value) is int:
+            error_exists = False
+    return value
 
 
 def _get_valid_price() -> int:
