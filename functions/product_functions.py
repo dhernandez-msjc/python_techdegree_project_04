@@ -5,6 +5,7 @@ import functions.cleaning_functions as clean
 from models.menu import (MenuItem, Menu)
 from models.model import (session, Product)
 
+# global variable to temporarily hold current product for editing
 current_product = None
 
 
@@ -30,9 +31,14 @@ class ColumnName(Enum):
 
 
 def build_main_menu() -> None:
+    """
+    Function builds the main menu of the program.
+    :return: None
+    """
     main_menu = Menu()
     main_menu.add_menu_item(NewProduct('N', 'New Product'))
     main_menu.add_menu_item(ViewProductById('V', 'View Product by ID'))
+    main_menu.add_menu_item(ViewProducts('P', 'View All Products'))
     main_menu.add_menu_item(ProductAnalysis('A', 'Product Analysis'))
     main_menu.add_menu_item(BackupDatabase('B', 'Backup Database'))
     main_menu.add_exit_function(exit_message='''
@@ -43,8 +49,16 @@ def build_main_menu() -> None:
 
 
 def build_edit_menu() -> None:
+    """
+    Builds the edit menu allowing the user to rename the product, change the price,
+    edit the quantity of product, the updated date, or delete the product.
+    :return: None
+    """
     product_edit_menu = Menu(title='Product Edit Meu', border_symbol='=')
-    product_edit_menu.add_menu_item(EditProduct('E', 'Edit Current Product'))
+    product_edit_menu.add_menu_item(EditProductName('N', 'Edit Product Name'))
+    product_edit_menu.add_menu_item(EditProductPrice('P', 'Edit product price'))
+    product_edit_menu.add_menu_item(EditProductQuantity('T', 'Edit product quantity'))
+    product_edit_menu.add_menu_item(EditProductDate('U', 'Edit date updated'))
     product_edit_menu.add_menu_item(DeleteProduct('D', 'Delete Product'))
     product_edit_menu.add_exit_function(exit_name='Return to main menu', exit_message="Returning to main menu.")
     product_edit_menu.start_menu()
@@ -97,6 +111,11 @@ class ViewProducts(MenuItem):
 
 
 class ViewProductById(MenuItem):
+    """
+    Allows selection of an individual product after view the product list.
+    Temporarily stores selected product in global space, sets global variable
+    to None upon returning to function close from edit_menu.
+    """
 
     def execute(self) -> None:
         global current_product
@@ -112,13 +131,51 @@ class ViewProductById(MenuItem):
         current_product = None
 
 
-class EditProduct(MenuItem):
+class EditProductName(MenuItem):
+    """
+    Edits the product name in the database.
+    """
 
     def execute(self) -> None:
-        super().execute()
+        global current_product
+        current_product.product_name = _edit_check(ColumnName.NAME, current_product.product_name)
+        session.commit()
+
+
+class EditProductPrice(MenuItem):
+    """
+    Edits the products price in the database.
+    """
+
+    def execute(self) -> None:
+        global current_product
+        current_product.product_price = _edit_check(ColumnName.PRICE, current_product.product_price)
+        session.commit()
+
+
+class EditProductQuantity(MenuItem):
+    """
+    Edits the product quantity in the database.
+    """
+
+    def execute(self) -> None:
+        global current_product
+        current_product.product_quantity = _edit_check(ColumnName.QUANTITY, current_product.product_quantity)
+        session.commit()
+
+
+class EditProductDate(MenuItem):
+
+    def execute(self) -> None:
+        global current_product
+        current_product.product_date_updated = _edit_check(ColumnName.DATE, current_product.prodct_date_updated)
+        session.commit()
 
 
 class DeleteProduct(MenuItem):
+    """
+    Deletes current product from the database.
+    """
 
     def execute(self) -> None:
         global current_product
@@ -162,7 +219,7 @@ class BackupDatabase(MenuItem):
         pass
 
 
-def edit_check(column_name: ColumnName, current_value):
+def _edit_check(column_name: ColumnName, current_value):
     print(f'\n**** EDIT {column_name.value} ****')
     if column_name is column_name.PRICE:
         print(f'\rCurrent Value: {current_value / 100: 0.2f}')
@@ -278,30 +335,6 @@ def _get_valid_integer(prompt: str, clean_function):
         if type(value) is int:
             error_exists = False
     return value
-
-
-def _get_valid_price() -> int:
-    price_error_exists = True
-    price = None
-
-    while price_error_exists:
-        price = input('Enter the product price (ex. 9.75): ')
-        price = clean.clean_price(price)
-        if type(price) == int:
-            price_error_exists = False
-    return price
-
-
-def _get_valid_quantity() -> int:
-    quantity_error_exists = True
-    quantity = None
-
-    while quantity_error_exists:
-        quantity = input('Enter quantity of product: ')
-        quantity = clean.clean_quantity(quantity)
-        if type(quantity) == int:
-            quantity_error_exists = False
-    return quantity
 
 
 def _get_valid_date() -> datetime.date:
