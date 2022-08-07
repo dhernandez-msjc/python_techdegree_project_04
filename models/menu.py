@@ -60,7 +60,7 @@ class Menu:
         menu_is_running = True
 
         while menu_is_running:
-            # self.clear_console()
+            self.clear_console()
             self.display_menu()
             user_selection = self._get_valid_user_entry()
             menu_is_running = self.run_menu_selection(user_selection)

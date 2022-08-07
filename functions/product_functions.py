@@ -136,7 +136,7 @@ class ViewProductById(MenuItem):
         selected_product_id = _get_valid_id()
         current_product = session.query(Product).filter(Product.product_id == selected_product_id).first()
         displays = [ProductDisplay.NAME, ProductDisplay.PRICE, ProductDisplay.QUANTITY, ProductDisplay.DATE]
-        # Menu.clear_console()
+        Menu.clear_console()
         _display_product(f'Product ID: {current_product.product_id}', current_product, displays)
         build_edit_menu()
         current_product = None
