@@ -70,11 +70,9 @@ def add_csv_data(csv_file_name: str) -> None:
 
             # if the product does not already exist, add the new product
             if not product_exists_in_db:
-                print('Product does not exist, let us add it.')
                 product_price = clean_price(product_price)
                 product_quantity = clean_quantity(product_quantity)
                 date_updated = clean_date(date_updated)
-
                 new_product = Product(product_name=product_name, product_quantity=product_quantity,
                                       product_price=product_price, date_updated=date_updated)
                 session.add(new_product)
