@@ -66,19 +66,30 @@ def add_csv_data(csv_file_name: str) -> None:
         for line in data:
             # check for repeats and isolate single product entry
             product_name, product_price, product_quantity, date_updated = line
-            product_exists_in_db = session.query(Product).filter(Product.product_name == product_name)
+            product_exists_in_db = session.query(Product).filter(Product.product_name == product_name).count() > 0
 
-            if product_exists_in_db is None:
-                print('success')
+            # if the product does not already exist, add the new product
+            if not product_exists_in_db:
+                print('Product does not exist, let us add it.')
                 product_price = clean_price(product_price)
                 product_quantity = clean_quantity(product_quantity)
                 date_updated = clean_date(date_updated)
 
                 new_product = Product(product_name=product_name, product_quantity=product_quantity,
                                       product_price=product_price, date_updated=date_updated)
-                print(new_product)
                 session.add(new_product)
-            session.commit()
+            else:
+                current_db_product = session.query(Product).filter(Product.product_name == product_name).first()
+                product_price = clean_price(product_price)
+                product_quantity = clean_quantity(product_quantity)
+                date_updated = clean_date(date_updated)
+
+                # update the current DB product with the most updated date item
+                if date_updated > current_db_product.date_updated:
+                    current_db_product.product_price = product_price
+                    current_db_product.product_quantity = product_quantity
+                    current_db_product.date_updated = date_updated
+        session.commit()
 
 
 def write_csv(csv_file_name: str) -> None:

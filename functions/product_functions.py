@@ -82,18 +82,23 @@ class NewProduct(MenuItem):
     def execute(self) -> None:
         Menu.clear_console()
         product_name = input('Enter the product name: ')
-        product_price = _get_valid_integer(prompt='Enter the product price (ex. 9.75): ',
-                                           clean_function=clean.clean_price)
-        product_quantity = _get_valid_integer(prompt='Enter quantity of product: ',
-                                              clean_function=clean.clean_quantity)
-        date_updated = _get_valid_date()
+        product_exists_in_db = session.query(Product).filter(Product.product_name == product_name).count() > 0
 
-        new_product = Product(product_name=product_name, product_price=product_price,
-                              product_quantity=product_quantity, date_updated=date_updated)
-        session.add(new_product)
-        session.commit()
-        print('New product has been added.')
-        time.sleep(1.5)
+        if not product_exists_in_db:
+            product_price = _get_valid_integer(prompt='Enter the product price (ex. 9.75): ',
+                                               clean_function=clean.clean_price)
+            product_quantity = _get_valid_integer(prompt='Enter quantity of product: ',
+                                                  clean_function=clean.clean_quantity)
+            date_updated = _get_valid_date()
+
+            new_product = Product(product_name=product_name, product_price=product_price,
+                                  product_quantity=product_quantity, date_updated=date_updated)
+            session.add(new_product)
+            session.commit()
+            print('New product has been added.')
+        else:
+            print('Product already exists in Database. Select udpate if you wish to update the product.')
+        time.sleep(2.0)
 
 
 class ViewProducts(MenuItem):
