@@ -45,10 +45,10 @@ def build_main_menu() -> None:
     :return: None
     """
     main_menu = Menu()
-    main_menu.add_menu_item(NewProduct('N', 'New Product'))
+    main_menu.add_menu_item(ProductAnalysis('N', 'Product Analysis'))
     main_menu.add_menu_item(ViewProductById('V', 'View Product by ID'))
     main_menu.add_menu_item(ViewProducts('P', 'View All Products'))
-    main_menu.add_menu_item(ProductAnalysis('A', 'Product Analysis'))
+    main_menu.add_menu_item(NewProduct('A', 'Add a new product'))
     main_menu.add_menu_item(BackupDatabase('B', 'Backup Database'))
     main_menu.add_exit_function(exit_message='''
     \rThank you for shopping with us!
